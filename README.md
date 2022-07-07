@@ -41,4 +41,4 @@ node index.js [-if path/to/text/file.txt | -i "input text" ] -il en -l 3 -ol de 
 # build
 `npm run build`
 
-for more targetplattforms edit targets in package.json.
+for more targetplattforms edit `"targets"` in package.json.
