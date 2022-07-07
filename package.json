@@ -1,0 +1,20 @@
+{
+  "name": "random_translator",
+  "version": "1.0.0",
+  "description": "translates a given text from a given input language through a given number of languages to a output language",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js -i \"this is a test\" -il en -l 3 -ol de -o -oh",
+    "build": "pkg -c package.json index.js && chmod +x build/*"
+  },
+  "author": "Fuchsi_II",
+  "license": "MIT",
+  "dependencies": {
+    "google-translate-api-x": "^10.2.2"
+  },
+  "pkg": {
+    "assets": "langs.json",
+    "targets": [ "node16-linux-x64", "node16-windows-x64" ],
+    "outputPath": "build"
+  }
+}
