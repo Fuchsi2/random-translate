@@ -27,6 +27,7 @@ node index.js [-if path/to/text/file.txt | -i "input text" ] -il en -l 3 -ol de 
 ```
 
 # build
-`npm run build`
+1. install pkg: `npm i -g pkg`
+2. build: `npm run build`
 
 for more targetplattforms edit `"targets"` in package.json.
