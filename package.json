@@ -7,7 +7,12 @@
     "test": "node index.js -i \"this is a test\" -il en -l 3 -ol de -o -oh",
     "build": "pkg -c package.json index.js && chmod +x build/*"
   },
-  "author": "Fuchsi_II",
+  "author": "Fuchsi2 <admin@reingefuchst.de>",
+  "homepage": "https://github.com/Fuchsi2/random-translate",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Fuchsi2/random-translate.git"
+  },
   "license": "MIT",
   "dependencies": {
     "google-translate-api-x": "^10.2.2"
