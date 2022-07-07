@@ -45,7 +45,9 @@ function recursiveCall(index,txt,promise) {
 //help 
 if (process.argv.includes("-h") || process.argv.includes("--help") || process.argv.length == 2) {
     console.log(`
-Help for Random Translator by Fuchsi2/Fuchsi_II/Seb.Fxs:
+Help for Random Translator by Fuchsi2:
+GitHub Repo: https://github.com/Fuchsi2/random-translate
+
 node index.js [-if path/to/text/file.txt | -i "input text" ] -il en -l 3 -ol de -of path/to/output/file.txt -o
 
 ///help///
