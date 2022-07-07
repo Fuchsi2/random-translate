@@ -4,7 +4,7 @@ a commandline tool for chained random translation
 # syntax
 
 ```
-Help for Random Translator by Fuchsi2:
+Help for Random Translator v1.0.1 by Fuchsi2:
 GitHub Repo: https://github.com/Fuchsi2/random-translate
 
 node index.js [-if path/to/text/file.txt | -i "input text" ] -il en -l 3 -ol de -of path/to/output/file.txt -o
