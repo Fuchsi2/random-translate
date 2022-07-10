@@ -1,9 +1,15 @@
 const translate = require('google-translate-api-x');
 const process = require('process');
-const fs = require('fs')
+const fs = require('fs');
+const cliProgress = require('cli-progress');
 
 const all_langs = require('./langs.json')
 
+const cliProgressOptions = {
+    format: 'Translations [{bar}] {percentage}% | {value}/{total} | ETA: {eta_formatted} | {duration_formatted}',
+    clearOnComplete: true,
+    hideCursor: true
+}
 
 var langs = []
 var settings = {
@@ -20,16 +26,17 @@ var settings = {
     "-d": ""
 }
 
-function recursiveCall(index,txt,promise) {
+function recursiveCall(index,txt,promise,progress) {
     return new Promise((resolve) => {
         if (promise == undefined) {
             // console.log(index, txt, txt == "", typeof promise);
-            return resolve(recursiveCall(index+1,"",translate(txt, {from: langs[index], to: langs[index+1]})))
+            return resolve(recursiveCall(index+1,"",translate(txt, {from: langs[index], to: langs[index+1]}),progress))
         } else {
             promise.then(ptext=>{
+                progress.increment();
                 // console.log(index, ptext.text, txt == "", typeof promise);
                 if (index+1 < langs.length) {
-                    return resolve(recursiveCall(index+1,"",translate(ptext.text, {from: langs[index], to: langs[index+1]})))
+                    return resolve(recursiveCall(index+1,"",translate(ptext.text, {from: langs[index], to: langs[index+1]}),progress))
                 } else {
                     return resolve(ptext.text)
                 }
@@ -40,20 +47,21 @@ function recursiveCall(index,txt,promise) {
     })
 }
 
-function multiPartCall(index,parts,promise,text) {
+function multiPartCall(index,parts,promise,text,progress) {
     return new Promise((resolve) => {
         if (promise == undefined) {
-            return resolve(multiPartCall(index+1,parts,recursiveCall(0,parts[index],undefined),""))
+            return resolve(multiPartCall(index+1,parts,recursiveCall(0,parts[index],undefined,progress),"",progress))
         } else {
             promise.then((txt) =>{
-                if (index+1 < parts.length) {
+                // progress.increment();
+                if (index < parts.length) {
                     debug(txt)
                     debug(text)
                     var otxt = text + " " + txt;
                     if (text == "") {
                         otxt = txt;
                     }
-                    return resolve(multiPartCall(index+1,parts,recursiveCall(0,parts[index]),otxt))
+                    return resolve(multiPartCall(index+1,parts,recursiveCall(0,parts[index],undefined,progress),otxt,progress))
                 } else {
                     return resolve(text + " " + txt)
                 }
@@ -102,6 +110,7 @@ if (process.argv.includes("-ll")) {
 
 // debug
 if (process.argv.includes("-d") || process.argv.includes("--debug")) {
+    cliProgressOptions.clearOnComplete = false;
     settings['-d']=process.argv[process.argv.findIndex(i=>{return i == "-d"})+1]
 }
 
@@ -170,7 +179,7 @@ if (settings['-oh']) {
     console.log()
 }
 
-if (text.length > 100) {
+if (text.length > 200) {
 
     var parts = [""]
     var parti = 0
@@ -184,8 +193,11 @@ if (text.length > 100) {
     debug(parts.length)
     debug(JSON.stringify(parts))
 
-    multiPartCall(0,parts,undefined,"").then((txt) => {
+    const progress = new cliProgress.SingleBar(cliProgressOptions, cliProgress.Presets.shades_classic);
+    progress.start(parts.length*(langs.length-1),0)
+    multiPartCall(0,parts,undefined,"",progress).then((txt) => {
         debug(txt)
+        progress.stop();
         if (settings['-of'] != "") {
             fs.writeFileSync(settings['-of'],txt)
         }
@@ -195,8 +207,11 @@ if (text.length > 100) {
     });
 
 } else {
-    recursiveCall(0,text).then((txt) =>{
+    const progress = new cliProgress.SingleBar(cliProgressOptions, cliProgress.Presets.shades_classic);
+    progress.start(langs.length-1,0)
+    recursiveCall(0,text,undefined,progress).then((txt) =>{
         debug(txt)
+        progress.stop();
         if (settings['-of'] != "") {
             fs.writeFileSync(settings['-of'],txt)
         }
