@@ -106,3 +106,4 @@ dist
 #specific ignores
 build/
 *.txt
+testing/
